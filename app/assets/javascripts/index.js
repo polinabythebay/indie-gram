@@ -1,4 +1,4 @@
-angular.module('indieGram', ['ui.router'])
+angular.module('indiegram', ['ui.router','templates'])
 .config([
   '$stateProvider',
   '$urlRouterProvider',
@@ -6,85 +6,27 @@ angular.module('indieGram', ['ui.router'])
     $stateProvider
       .state('home', {
         url: '/home',
-        templateUrl: '/home.html',
-        controller: 'MainCtrl'
+        templateUrl: 'home/_home.html',
+        controller: 'MainCtrl',
+        // ensuring that anytime our home state is entered
+        // we will automatically query all posts from our 
+        // backend before state finishes loading
+        resolve: {
+          postPromise: ['posts', function(posts) {
+            return posts.getAll();
+          }]
+        }
       })
       .state('posts', {
         url: 'posts/{id}',
-        templateUrl: '/posts.html',
-        controller: 'PostsCtrl'
+        templateUrl: 'posts/posts.html',
+        controller: 'PostsCtrl',
+        resolve: {
+          post: ['$stateParams', 'posts', function($stateParams, posts) {
+            return posts.get($stateParams.id);
+          }]
+        }
       });
 
     $urlRouterProvider.otherwise('home');
   }])
-.factory('posts', [function() {
-  //service body
-  var service = {
-    posts: []
-  };
-  return service;  
-}])
-.controller('MainCtrl', [
-  '$scope',
-  'posts',
-  function($scope, posts) {
-    $scope.test = "hello world!";
-    $scope.posts = posts.posts;
-
-    //for fake comments
-    $scope.posts.push({
-      title: $scope.title,
-      link: $scope.link,
-      upvotes: 0,
-      comments: [
-        {author: 'Joe', body: 'Cool post!', upvotes: 0},
-        {author: 'Bob', body: 'Great idea but everything is wrong!', upvotes: 0}
-      ]
-    });
-
-    $scope.posts = [
-      {title: 'post 1', upvotes: 5},
-      {title: 'post 2', upvotes: 2},
-      {title: 'post 3', upvotes: 15},
-      {title: 'post 4', upvotes: 9},
-      {title: 'post 5', upvotes: 4}
-    ];
-
-    $scope.addPost = function() {
-      if (!$scope.title || $scope.title === '') {
-        return;
-      }
-      $scope.posts.push({
-        title: $scope.title, 
-        link: $scope.link,
-        upvotes: 0});
-      $scope.title = "";
-      $scope.link = "";
-    };
-
-    $scope.incrementUpvotes = function(post) {
-      post.upvotes += 1;
-    };
-  }])
-.controller('PostsCtrl', [
-  '$scope',
-  '$stateParams',
-  'posts',
-  function($scope, $stateParams, posts) {
-
-    $scope.post = posts.posts[$stateParams.id];
-
-    $scope.addComment = function() {
-      if($scope.body === '') {
-        return;
-      }
-
-      $scope.post.comments.push({
-        body: $scope.body,
-        author: 'user',
-        upvotes: 0
-      });
-      $scope.body = '';
-    };
-
-  }]);
