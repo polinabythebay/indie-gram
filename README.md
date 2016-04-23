@@ -1,6 +1,5 @@
 Indiegram
-
-=====
+---
 
 Photo sharing for indies of all ages. Purpose is to get to know tools in the Angular/Rails ecosystem.
 
