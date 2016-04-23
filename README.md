@@ -1,6 +1,8 @@
-== Indiegram
+Indiegram
 
-An instagram clone for Indies of all ages. Purpose is to get to know tools in the Angular/Rails ecosystem.
+=====
+
+Photo sharing for indies of all ages. Purpose is to get to know tools in the Angular/Rails ecosystem.
 
 TODO:
 
